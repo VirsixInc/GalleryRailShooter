@@ -1,11 +1,16 @@
 ﻿//#define LevelDebug
 
+
+
 using UnityEngine;
 using System.Collections;
 using OSC.NET;
 
 
+
 public class ManagerScript : MonoBehaviour {
+
+
 
 	private static ManagerScript _instance;
 
@@ -248,5 +253,7 @@ public class ManagerScript : MonoBehaviour {
 		ShotManager.instance.NetworkShoot((float)args[0], (1f-(float)args[1]));
 		print (args[0] + "    " + args[1]);
 	}
+
 }
-	
+
+
