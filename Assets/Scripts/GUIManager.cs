@@ -45,7 +45,7 @@ public class GUIManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		hud = ManagerScript.instance.GetComponent<HUD>();
+		hud = CameraManager.instance.GetComponent<HUD>();
 
 		currGUIState = GUIManagerState.Title;
 	}

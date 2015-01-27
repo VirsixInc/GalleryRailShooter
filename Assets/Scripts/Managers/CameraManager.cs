@@ -1,32 +1,27 @@
 ﻿//#define LevelDebug
 
-
-
 using UnityEngine;
 using System.Collections;
 using OSC.NET;
 
 
+public class CameraManager : MonoBehaviour {
 
-public class ManagerScript : MonoBehaviour {
-
-
-
-	private static ManagerScript _instance;
+	private static CameraManager _instance;
 
 	public enum CameraIndex {Front, Right, Back, Left}
 
 	[System.NonSerialized]
 	public NetworkInterpolatedTransform m_NIT;							//Used for NetworkSync. Without this, camera movement will be choppy across network.
-	public ClientScript m_frontCam, m_rightCam, m_backCam, m_leftCam;
+	public CameraClientScript m_frontCam, m_rightCam, m_backCam, m_leftCam;
 	
 	private int m_assignedCameraIndex;
  
 	#region Singleton Initialization
-	public static ManagerScript instance {
+	public static CameraManager instance {
 		get { 
 			if(_instance == null)
-				_instance = GameObject.FindObjectOfType<ManagerScript>();
+				_instance = GameObject.FindObjectOfType<CameraManager>();
 			
 			return _instance;
 		}
@@ -253,7 +248,5 @@ public class ManagerScript : MonoBehaviour {
 		ShotManager.instance.NetworkShoot((float)args[0], (1f-(float)args[1]));
 		print (args[0] + "    " + args[1]);
 	}
-
 }
-
-
+	

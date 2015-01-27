@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ClientScript : MonoBehaviour {
+public class CameraClientScript : MonoBehaviour {
 	
 	public bool isAssigned = false;
-	public ManagerScript.CameraIndex cameraIndex;
+	public CameraManager.CameraIndex cameraIndex;
 
   	void OnGUI(){
 		if( GameManager.instance.CurrentMode == (int)GameManager.GameMode.NetworkSetup )

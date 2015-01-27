@@ -38,7 +38,7 @@ public class ShotManager : MonoBehaviour {
 	#endregion
 
 	void Start () {
-		m_audio = ManagerScript.instance.GetComponent<AudioSource>();
+		m_audio = CameraManager.instance.GetComponent<AudioSource>();
 		mainCamForOSC = GameObject.Find("0");
 	}
 	

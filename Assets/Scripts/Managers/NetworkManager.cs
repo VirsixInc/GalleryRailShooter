@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class NetworkManager : MonoBehaviour {
@@ -35,17 +35,17 @@ public class NetworkManager : MonoBehaviour {
 
 	void OnServerInitialized(){
 		Debug.Log("Server Initialized");
-		ManagerScript.instance.InitHost();
+		CameraManager.instance.InitHost();
 	}
 
 	void OnConnectedToServer() {
-		ManagerScript.instance.m_NIT.enabled = true;
+		CameraManager.instance.m_NIT.enabled = true;
 		CameraMove.instance.m_NIT.enabled = true;
 	}
 
 	void OnDisconnectedFromServer() {
 		if( Network.isClient ) {
-			ManagerScript.instance.m_NIT.enabled = false;
+			CameraManager.instance.m_NIT.enabled = false;
 			CameraMove.instance.m_NIT.enabled = false;
 		}
 	}

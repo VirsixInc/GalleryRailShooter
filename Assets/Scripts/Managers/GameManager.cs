@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour {
 	[System.NonSerialized]
 	public bool m_gameIsRestarting = false;
 
-	private ManagerScript m_managerScript;
+	private CameraManager m_managerScript;
 	private CameraMove m_cameraMove;
 	private GUIManager m_guiManager;
 	private NetworkLevelLoader m_networkLevelLoader;
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		m_managerScript = ManagerScript.instance;
+		m_managerScript = CameraManager.instance;
 		m_cameraMove = CameraMove.instance;
 		m_guiManager = GUIManager.instance;
 		m_networkLevelLoader = GetComponent<NetworkLevelLoader>();
@@ -116,6 +116,7 @@ public class GameManager : MonoBehaviour {
 				break;
 
 			case (int)GameMode.Play:
+				CameraMove.instance.MoveCamAlongSpline();
 				//StartCoroutine( "TransitionTitleSongToLimericSong" );
 				break;
 

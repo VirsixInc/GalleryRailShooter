@@ -62,7 +62,7 @@ public class CameraMove : MonoBehaviour {
 
 		if( Network.isServer ) {
 			MoveToLevelStart();
-			ManagerScript.instance.collider.enabled = true;
+			CameraManager.instance.collider.enabled = true;
 
 			if( level > 0 ) {
 				m_navMeshAgent.enabled = true;
@@ -100,8 +100,15 @@ public class CameraMove : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if( GameManager.instance.CurrentMode == (int)GameManager.GameMode.Play && m_isMoving ) {
-			if( DistanceToNextWayPoint() < 2f ){
-				StopMovement();
+			if( DistanceToNextWayPoint() < 1f ){
+				if( m_nextWaypoint.StopsPlayerMovement() == false ) {
+					m_nextWaypoint = m_nextWaypoint.m_next;
+					MoveCamAlongSpline();
+				} else {
+					m_nextWaypoint = m_nextWaypoint.m_next;
+					StopMovement();
+				}
+
 			}
 		}
 	}
@@ -145,7 +152,7 @@ public class CameraMove : MonoBehaviour {
 		Transform lookDir =  levelStart.GetChild(0).transform;
 		m_thisTransform.position = levelStart.position;
 		m_thisTransform.LookAt( new Vector3( lookDir.position.x, m_thisTransform.position.y, lookDir.position.z ) );
-		ManagerScript.instance.transform.localRotation = Quaternion.identity;
+		CameraManager.instance.transform.localRotation = Quaternion.identity;
 		m_navMeshAgent.enabled = true;
 	}
 	
@@ -155,7 +162,7 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	public void MoveCamAlongSpline () {
-		if( Network.isServer ) {
+		if( Network.isServer && m_nextWaypoint != null ) {
 			m_navMeshAgent.SetDestination( m_nextWaypoint.transform.position );
 			m_isMoving = true;
 		}
