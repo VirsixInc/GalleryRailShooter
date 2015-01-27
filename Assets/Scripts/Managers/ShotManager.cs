@@ -64,12 +64,16 @@ public class ShotManager : MonoBehaviour {
 			} else if ( GameManager.instance.CurrentMode == (int)GameManager.GameMode.Title ) {
 				if( Network.isServer ) {
 					GameManager.instance.ChangeMode( (int)GameManager.GameMode.Play );
-					//CameraMove.instance.MoveCamAlongSpline();
 				}
 			}
 		}
 	}
 
+	/// <summary>
+	/// Finds the context of the input and sends the data to the corresponding functions.
+	/// </summary>
+	/// <param name="x">The x coordinate in viewport space.</param>
+	/// <param name="y">The y coordinate in viewport space.</param>
 	public void NetworkShoot(float x, float y) {
 		// TODO Ghetto fix. Remove this and uncomment bottom when done
 		if( INVERT_X )
@@ -80,11 +84,6 @@ public class ShotManager : MonoBehaviour {
 		switch( GameManager.instance.CurrentMode )
 		{
 		case (int)GameManager.GameMode.Play:
-//			if( INVERT_X )
-//				x = 1f - x;
-//			if( INVERT_Y )
-//				y = 1f - y;
-
 			Ray ray = Camera.main.ViewportPointToRay(new Vector3(x, y, 0.0f));
 			
 			if(Network.isServer)
@@ -127,16 +126,20 @@ public class ShotManager : MonoBehaviour {
 	/// <param name="newPos">New position.</param>
 	/// <param name="newRotation">New rotation.</param>
 	private void GetHitParticle( Vector3 newPos, Vector3 newRotation, GameObject particlePrefab ) {
-		// Get paricle and set position/rotation
-		GameObject particle = StaticPool.GetObj( particlePrefab );
-		particle.transform.position = newPos;
-		particle.transform.rotation = Quaternion.LookRotation( newRotation );
+		if( particlePrefab != null ) {
+			// Get paricle and set position/rotation
+			GameObject particle = StaticPool.GetObj( particlePrefab );
+			particle.transform.position = newPos;
+			particle.transform.rotation = Quaternion.LookRotation( newRotation );
 
-		// Play the particle
-		ParticleSystem pSystem = particle.GetComponent<ParticleSystem>();
-		pSystem.Play();
-		networkView.RPC( "NetworkPlayParticle", RPCMode.Others, pSystem.networkView.viewID );
-		StartCoroutine( "ResetParticle", pSystem );
+			// Play the particle
+			ParticleSystem pSystem = particle.GetComponent<ParticleSystem>();
+			pSystem.Play();
+			networkView.RPC( "NetworkPlayParticle", RPCMode.Others, pSystem.networkView.viewID );
+			StartCoroutine( "ResetParticle", pSystem );
+		} else {
+			Debug.LogWarning( gameObject.name + "'s missing a prefab for it's public particle variable." );
+		}
 	}
 
 	IEnumerator ResetParticle( ParticleSystem particleSystem ) {

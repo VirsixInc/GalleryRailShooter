@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class clientScript : MonoBehaviour {
+public class ClientScript : MonoBehaviour {
 	
 	public bool isAssigned = false;
 	public ManagerScript.CameraIndex cameraIndex;
