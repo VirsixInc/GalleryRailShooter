@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour {
 	private CameraMove m_cameraMove;
 	private GUIManager m_guiManager;
 	private NetworkLevelLoader m_networkLevelLoader;
-	private Stats m_playerStats;
 
 	// Music
 	private bool m_playingGameMusic = false;
@@ -75,7 +74,6 @@ public class GameManager : MonoBehaviour {
 		m_cameraMove = CameraMove.instance;
 		m_guiManager = GUIManager.instance;
 		m_networkLevelLoader = GetComponent<NetworkLevelLoader>();
-		m_playerStats = CameraMove.instance.GetComponent<Stats>();
 		m_startMusicVolume = m_gameMusicAudioSource.volume;
 	}
 	
@@ -83,22 +81,10 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		if( Network.isServer ) {
 			// Song logic
-			if( m_playingGameMusic ) {
-				if( m_gameMusicAudioSource.time >= m_gameMusicAudioSource.clip.length - m_musicFadeTime )
-					StartCoroutine( "TransitionToNextSong" );
-			}
-
-			// Check for player death
-			switch( m_currMode )
-			{
-			case GameMode.Play:
-				if( m_playerStats.m_currHealth <= 0 ) {
-					CameraMove.instance.m_isMoving = false;
-					CameraMove.instance.m_navMeshAgent.Stop();
-					ChangeMode( (int)GameMode.GameOver );
-				}
-				break;
-			}
+//			if( m_playingGameMusic ) {
+//				if( m_gameMusicAudioSource.time >= m_gameMusicAudioSource.clip.length - m_musicFadeTime )
+//					StartCoroutine( "TransitionToNextSong" );
+//			}
 		}
 	}
 
@@ -123,14 +109,14 @@ public class GameManager : MonoBehaviour {
 			{
 			case (int)GameMode.Title:
 				m_gameIsRestarting = false;
-				m_SfxAudioSource.clip = m_thunderSound;
+				//m_SfxAudioSource.clip = m_thunderSound;
 
 				if( !m_gameMusicAudioSource.isPlaying )
 					m_gameMusicAudioSource.Play();
 				break;
 
 			case (int)GameMode.Play:
-				StartCoroutine( "TransitionTitleSongToLimericSong" );
+				//StartCoroutine( "TransitionTitleSongToLimericSong" );
 				break;
 
 			case (int)GameMode.GameOver:
@@ -184,7 +170,7 @@ public class GameManager : MonoBehaviour {
 		float timer = 0f;
 
 		m_gameMusicAudioSource.Stop();
-		m_SfxAudioSource.Play();
+		//m_SfxAudioSource.Play();
 
 		// Fade in second clip
 		m_gameMusicAudioSource.clip = m_songSongForLimeric;

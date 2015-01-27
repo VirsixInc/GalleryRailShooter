@@ -4,8 +4,6 @@ using System.Collections;
 public class Waypoint : MonoBehaviour {
 
 	public Waypoint m_next;
-	public bool isTimedEvent = false;
-	public float eventTime = 10f;
 
 	
 	[System.NonSerialized]
@@ -15,7 +13,6 @@ public class Waypoint : MonoBehaviour {
 		if( m_next != null ) {
 			Gizmos.color = Color.cyan;
 			Gizmos.DrawLine( transform.position, m_next.transform.position );
-			
 		}
 	}
 }

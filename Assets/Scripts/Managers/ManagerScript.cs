@@ -13,7 +13,7 @@ public class ManagerScript : MonoBehaviour {
 
 	[System.NonSerialized]
 	public NetworkInterpolatedTransform m_NIT;							//Used for NetworkSync. Without this, camera movement will be choppy across network.
-	public clientScript m_frontCam, m_rightCam, m_backCam, m_leftCam;
+	public ClientScript m_frontCam, m_rightCam, m_backCam, m_leftCam;
 	
 	private int m_assignedCameraIndex;
  
