@@ -9,6 +9,8 @@ public class Target : MonoBehaviour {
 
 	void Start () {
 		m_animator = GetComponentInChildren<Animator>();
+
+		SetColliders( false );
 	}
 
 	public void Hit() {
@@ -19,6 +21,7 @@ public class Target : MonoBehaviour {
 	}
 
 	public void PopUp() {
+		m_animator.SetTrigger( "Rise" );
 		SetColliders (true);
 	}
 
