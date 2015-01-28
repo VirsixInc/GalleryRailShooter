@@ -19,13 +19,22 @@ public class LerpMaterialAlpha : MonoBehaviour {
 	void OnTriggerEnter( Collider col ) {
 		if( Network.isServer ) {
 			if( col.tag == "Player" ) {
-				StartLerpingAlpha();
-				myNetworkview.RPC( "StartLerpingAlpha", RPCMode.Others );
+				StartLerpingAlpha( true );
+				myNetworkview.RPC( "StartLerpingAlpha", RPCMode.Others, true );
 			}
 		}
 	}
 
-	IEnumerator LerpAlpha() {
+	void OnTriggerExit( Collider col ) {
+		if( Network.isServer ) {
+			if( col.tag == "Player" ) {
+				StartLerpingAlpha( false );
+				myNetworkview.RPC( "StartLerpingAlpha", RPCMode.Others, false );
+			}
+		}
+	}
+
+	IEnumerator LerpAlphaOut() {
 		float timer = 0f;
 	
 		while( timer <= m_lerpTime ) {
@@ -35,11 +44,29 @@ public class LerpMaterialAlpha : MonoBehaviour {
 			timer += Time.deltaTime;
 			yield return null;
 		}
-		gameObject.SetActive( false );
+
+		renderer.enabled = false;
+	}
+
+	IEnumerator LerpAlphaIn() {
+		float timer = 0f;
+		renderer.enabled = true;
+		
+		while( timer <= m_lerpTime ) {
+			float alpha = Mathf.Lerp( 0f, 1f, timer / m_lerpTime );
+			myMaterial.color = new Color( myMaterial.color.r, myMaterial.color.g, myMaterial.color.b, alpha );
+			
+			timer += Time.deltaTime;
+			yield return null;
+		}
 	}
 
 	[RPC]
-	void StartLerpingAlpha() {
-		StartCoroutine( LerpAlpha() );
+	void StartLerpingAlpha( bool lerpToClear ) {
+		if( lerpToClear ) {
+			StartCoroutine( LerpAlphaOut() );
+		} else {
+			StartCoroutine( LerpAlphaIn() );
+		}
 	}
 }
