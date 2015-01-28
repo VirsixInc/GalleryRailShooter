@@ -23,6 +23,7 @@ public class Room : Waypoint {
 			}
 
 			CameraMove.instance.MoveCamAlongSpline();
+			m_active = false;
 		}
 	}
 
