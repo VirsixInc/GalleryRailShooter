@@ -22,7 +22,10 @@ public class Room : Waypoint {
 					return;
 			}
 
-			CameraMove.instance.MoveCamAlongSpline();
+			if( CameraMove.instance.m_isMoving == false ) {
+				CameraMove.instance.MoveCamAlongSpline();
+				m_active = false;
+			}
 		}
 	}
 
