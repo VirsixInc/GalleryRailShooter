@@ -99,7 +99,7 @@ public class CameraMove : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if( GameManager.instance.CurrentMode == (int)GameManager.GameMode.Play && m_isMoving ) {
+		if( GameManager.instance.CurrentMode == (int)GameManager.GameMode.Play && m_isMoving && m_nextWaypoint != m_levelEndWp ) {
 			if( DistanceToNextWayPoint() < 1f ){
 				if( m_nextWaypoint.StopsPlayerMovement() == false ) {
 					m_nextWaypoint = m_nextWaypoint.m_next;
@@ -162,7 +162,7 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	public void MoveCamAlongSpline () {
-		if( Network.isServer && m_nextWaypoint != null ) {
+		if( Network.isServer ) {
 			m_navMeshAgent.SetDestination( m_nextWaypoint.transform.position );
 			m_isMoving = true;
 		}

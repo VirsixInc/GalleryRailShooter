@@ -110,10 +110,10 @@ public class ShotManager : MonoBehaviour {
 			Debug.DrawLine(ray.origin, hit.point, Color.red, 10f);
             //Network.Instantiate(gunFeedback, hit.point, Quaternion.LookRotation(hit.normal), 0);
 
-			if(hit.transform.tag == "Enemy") {
+			if(hit.transform.tag == "Outside" || hit.transform.tag == "Middle" || hit.transform.tag == "Center") {
 				m_audio.Play();
 				GetHitParticle( hit.point, hit.normal, enemyHitParticle );
-				hit.transform.SendMessage("TakeDamage", m_damage);				
+				hit.transform.SendMessageUpwards("Hit");				
 			} else {
 				GetHitParticle( hit.point, hit.normal, missedShotParticle );
 			}
