@@ -26,6 +26,9 @@ public class Desk : MonoBehaviour {
 
 			m_allTargetsHit = true;
 		}
+
+		if( Input.GetKeyDown( KeyCode.Space ) )
+			Activate();
 	}
 
 	public bool AllTargetsHit() {
@@ -34,5 +37,9 @@ public class Desk : MonoBehaviour {
 
 	public void Activate() {
 		m_active = true;
+
+		foreach( Target target in m_targets ) {
+			target.PopUp();
+		}
 	}
 }
