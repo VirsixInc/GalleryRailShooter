@@ -23,9 +23,11 @@ public class Target : MonoBehaviour {
 	}
 
 	public void PopUp() {
-		m_animator.SetTrigger( "Rise" );
-		myNetworkView.RPC( "SendTrigger", RPCMode.Others, "Drop" );
-		SetColliders (true);
+		if( Network.isServer ) {
+			m_animator.SetTrigger( "Rise" );
+			myNetworkView.RPC( "SendTrigger", RPCMode.Others, "Rise" );
+			SetColliders (true);
+		}
 	}
 
 	void SetColliders(bool on) {
