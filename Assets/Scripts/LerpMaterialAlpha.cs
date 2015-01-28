@@ -1,21 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof (NetworkView))]
 [RequireComponent (typeof (BoxCollider))]
 public class LerpMaterialAlpha : MonoBehaviour {
 
 	Material myMaterial;
+	NetworkView myNetworkview;
 
 	public float m_lerpTime = 1f;
 
 	// Use this for initialization
 	void Start () {
 		myMaterial = renderer.material;
+		myNetworkview = GetComponent<NetworkView>();
 	}
 	
 	void OnTriggerEnter( Collider col ) {
-		if( col.tag == "Player" )
-			StartCoroutine( LerpAlpha() );
+		if( Network.isServer ) {
+			if( col.tag == "Player" ) {
+				StartLerpingAlpha();
+				myNetworkview.RPC( "StartLerpingAlpha", RPCMode.Others );
+			}
+		}
 	}
 
 	IEnumerator LerpAlpha() {
@@ -29,5 +36,10 @@ public class LerpMaterialAlpha : MonoBehaviour {
 			yield return null;
 		}
 		gameObject.SetActive( false );
+	}
+
+	[RPC]
+	void StartLerpingAlpha() {
+		StartCoroutine( LerpAlpha() );
 	}
 }
