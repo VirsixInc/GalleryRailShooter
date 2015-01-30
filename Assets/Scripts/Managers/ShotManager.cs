@@ -111,11 +111,12 @@ public class ShotManager : MonoBehaviour {
             //Network.Instantiate(gunFeedback, hit.point, Quaternion.LookRotation(hit.normal), 0);
 
 			if(hit.transform.tag == "Outside" || hit.transform.tag == "Middle" || hit.transform.tag == "Center") {
+				if( enemyHitParticle != null )
+					GetHitParticle( hit.point, hit.normal, enemyHitParticle );
 				m_audio.Play();
-				GetHitParticle( hit.point, hit.normal, enemyHitParticle );
 				hit.transform.SendMessageUpwards("Hit");				
 			} else {
-				GetHitParticle( hit.point, hit.normal, missedShotParticle );
+				//GetHitParticle( hit.point, hit.normal, missedShotParticle );
 			}
 		}
 	}
