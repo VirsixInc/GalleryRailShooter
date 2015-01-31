@@ -134,22 +134,24 @@ public class ShotManager : MonoBehaviour {
 			particle.transform.rotation = Quaternion.LookRotation( newRotation );
 
 			// Play the particle
-			ParticleSystem pSystem = particle.GetComponent<ParticleSystem>();
+			ParticleSystem pSystem = particle.GetComponentInChildren<ParticleSystem>();
 			pSystem.Play();
-			networkView.RPC( "NetworkPlayParticle", RPCMode.Others, pSystem.networkView.viewID );
-			StartCoroutine( "ResetParticle", pSystem );
+			networkView.RPC( "NetworkPlayParticle", RPCMode.Others, particle.networkView.viewID );
+			StartCoroutine( "ResetParticle", particle );
 		} else {
 			Debug.LogWarning( gameObject.name + "'s missing a prefab for it's public particle variable." );
 		}
 	}
 
-	IEnumerator ResetParticle( ParticleSystem particleSystem ) {
+	IEnumerator ResetParticle( GameObject particle ) {
+		ParticleSystem particleSystem = particle.GetComponentInChildren<ParticleSystem> ();
+
 		while( true ) {
 			yield return new WaitForSeconds(0.05f);
 
 			if(!particleSystem.IsAlive(true))
 			{
-				particleSystem.GetComponent<StaticPoolActive>().m_activeInScene = false;
+				particle.GetComponent<StaticPoolActive>().m_activeInScene = false;
 				break;
 			}
 		}
