@@ -26,26 +26,26 @@ public class HUD : MonoBehaviour {
 	}
 
 	void Update() {
-		if( Input.GetKeyDown( KeyCode.G ) )
-			ActivateFendOffTheHordeGUI();
-		if( Input.GetKeyDown( KeyCode.H ) )
-			ActivateSaveTheVillagerGUI();
+//		if( Input.GetKeyDown( KeyCode.G ) )
+//			ActivateFendOffTheHordeGUI();
+//		if( Input.GetKeyDown( KeyCode.H ) )
+//			ActivateSaveTheVillagerGUI();
 	}
 
 	[RPC]
 	public void UpdateHp() {
 		// Every time we update hp, go through the list of gui hearts. Turn off the hearts above the current hp the player has
-		for( int i = 0; i < playerStats.m_maxHealth; i++ ) {
-			if( i > playerStats.m_currHealth - 1 ) {
-				canvas0Hearts[i].enabled = false;
-				canvas1Hearts[i].enabled = false;
-				canvas3Hearts[i].enabled = false;
-			} else {
-				canvas0Hearts[i].enabled = true;
-				canvas1Hearts[i].enabled = true;
-				canvas3Hearts[i].enabled = true;
-			}
-		}
+//		for( int i = 0; i < playerStats.m_maxHealth; i++ ) {
+//			if( i > playerStats.m_currHealth - 1 ) {
+//				canvas0Hearts[i].enabled = false;
+//				canvas1Hearts[i].enabled = false;
+//				canvas3Hearts[i].enabled = false;
+//			} else {
+//				canvas0Hearts[i].enabled = true;
+//				canvas1Hearts[i].enabled = true;
+//				canvas3Hearts[i].enabled = true;
+//			}
+//		}
 	}
 
 	/// <summary>

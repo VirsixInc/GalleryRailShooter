@@ -51,7 +51,7 @@ public class GUIManager : MonoBehaviour {
 	}
 	
 	void OnLevelWasLoaded( int level ) {
-		if( level > 0 ) {
+		if( level > 1 ) {
 			ZeroAlphaOnStartGUIs();
 		}
 	}
@@ -70,14 +70,8 @@ public class GUIManager : MonoBehaviour {
 			// Deactivate title
 			FadeStartScreen( true );
 			networkView.RPC( "FadeStartScreen", RPCMode.Others, true );
-			// Activate hearts
-			CameraMove.instance.GetComponent<Stats>().Reset();
-			UpdateHud();
 
 		} else if( GameManager.instance.CurrentMode == (int)GameManager.GameMode.GameOver ) {
-			// Deactivate hearts
-			CameraMove.instance.GetComponent<Stats>().m_currHealth = 0;
-			UpdateHud();
 			// Activate End Screen
 			FadeEndScreen( false );
 			networkView.RPC( "FadeEndScreen", RPCMode.Others, false );
@@ -132,7 +126,9 @@ public class GUIManager : MonoBehaviour {
 		foreach( Image img in m_startScreens ) {
 			if( img != null ) {
 				img.enabled = true;
-				img.color = new Color( img.color.r, img.color.g, img.color.b, 1f );
+				Color color = img.color;
+				color.a = 1f;
+				img.color = color;
 			}
 		}
 	}

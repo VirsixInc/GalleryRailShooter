@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour {
 				break;
 
 			case (int)GameMode.Play:
-				CameraMove.instance.MoveCamAlongSpline();
+				//ameraMove.instance.MoveCamAlongSpline();
 				//StartCoroutine( "TransitionTitleSongToLimericSong" );
 				break;
 
