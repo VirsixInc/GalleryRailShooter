@@ -6,10 +6,12 @@ public class Target : MonoBehaviour {
 	private bool m_hit = false;
 	private Animator m_animator;
 	private NetworkView myNetworkView;
+	private AudioSource myAudioSource;
 
 	void Start () {
 		m_animator = GetComponentInChildren<Animator>();
 		myNetworkView = GetComponent<NetworkView>();
+		myAudioSource = GetComponent<AudioSource>();
 		SetColliders( false );
 	}
 
@@ -19,6 +21,7 @@ public class Target : MonoBehaviour {
 			myNetworkView.RPC( "SendTrigger", RPCMode.Others, "Drop" );
 			m_hit = true;
 			SetColliders (false);
+			myAudioSource.Play();
 		}
 	}
 

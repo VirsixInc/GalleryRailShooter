@@ -101,6 +101,11 @@ public class CameraMove : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if( GameManager.instance.CurrentMode == (int) GameManager.GameMode.Play && Network.isServer ) {
+			if(Input.GetKeyDown( KeyCode.M ) )
+				MoveCamAlongSpline();
+		}
+
 		if( GameManager.instance.CurrentMode == (int)GameManager.GameMode.Play && m_isMoving && m_nextWaypoint != m_levelEndWp ) {
 			if( DistanceToNextWayPoint() < 1f ){
 				if( m_nextWaypoint.StopsPlayerMovement() == false ) {

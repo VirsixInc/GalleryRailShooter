@@ -8,8 +8,8 @@ public class ShotManager : MonoBehaviour {
 	public int m_damage = 1;
 	public GameObject enemyHitParticle;
 	public GameObject missedShotParticle;
-
 	private AudioSource m_audio;
+
 	public bool INVERT_X = false;
 	public bool INVERT_Y = false;
 	
