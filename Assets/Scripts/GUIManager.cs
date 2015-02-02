@@ -11,7 +11,7 @@ public class GUIManager : MonoBehaviour {
 	public Text m_titleText;
 	public Text m_shootToStartText;
     public Image[] m_startScreens;    
-    public Image[] m_endScreens;
+    public Text[] m_endScreens;
 	public Image[] m_transitionImages;
 
 	// Fading of GUI elements
@@ -114,9 +114,9 @@ public class GUIManager : MonoBehaviour {
 			if( img != null )
 				img.color = new Color( img.color.r, img.color.g, img.color.b, 0f );
 		}
-		foreach( Image img in m_endScreens ) {
-			if( img != null )
-				img.color = new Color( img.color.r, img.color.g, img.color.b, 0f );
+		foreach( Text text in m_endScreens ) {
+			if( text != null )
+				text.color = new Color( text.color.r, text.color.g, text.color.b, 0f );
 		}
 
 		if( Network.isServer ) 
@@ -163,7 +163,7 @@ public class GUIManager : MonoBehaviour {
 
 	[RPC]
 	public void FadeEndScreen( bool fadeOut ) {
-		foreach( Image endScreenImage in m_endScreens ) {
+		foreach( Text endScreenImage in m_endScreens ) {
 			if( endScreenImage != null ) {
 				if( fadeOut )
 					StartCoroutine( FadeOut( endScreenImage ) );

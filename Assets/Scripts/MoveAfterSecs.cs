@@ -7,7 +7,8 @@ public class MoveAfterSecs : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		StartCoroutine( Move() );
+		if( Network.isServer ) 
+			StartCoroutine( Move() );
 	}
 	
 	IEnumerator Move() {
@@ -15,5 +16,6 @@ public class MoveAfterSecs : MonoBehaviour {
 		CameraMove.instance.MoveCamAlongSpline();
 		yield return new WaitForSeconds( m_waitSeconds );
 		GUIManager.instance.FadeTransitionScreen( true );
+		GUIManager.instance.networkView.RPC( "FadeTransitionScreen", RPCMode.Others, true );
 	}
 }

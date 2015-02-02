@@ -28,5 +28,9 @@ public class LerpLook : MonoBehaviour {
 			timer += Time.deltaTime;
 			yield return null;
 		}
+
+		yield return new WaitForSeconds( 5f );
+		if( Network.isServer )
+			GUIManager.instance.FadeEndScreen( false );
 	}
 }
