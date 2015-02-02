@@ -20,4 +20,9 @@ public class Waypoint : MonoBehaviour {
 	public bool StopsPlayerMovement() {
 		return m_stopsPlayer;
 	}
+
+	void OnDrawGizmos() {
+		Gizmos.color = Color.red;
+		Gizmos.DrawCube( transform.position, Vector3.one );
+	}
 }
