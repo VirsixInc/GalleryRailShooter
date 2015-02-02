@@ -65,8 +65,10 @@ public class CameraMove : MonoBehaviour {
 			CameraManager.instance.collider.enabled = true;
 
 			if( level > 0 ) {
+				if( level == 1 )
+					GameManager.instance.ChangeMode( (int)GameManager.GameMode.Title );
+
 				m_navMeshAgent.enabled = true;
-				GameManager.instance.ChangeMode( (int)GameManager.GameMode.Title );
 
 				// Check if we have set the beginning or end of the the level. If not, cry.
 				if( m_levelStartWp == null ) {

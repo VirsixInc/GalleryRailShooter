@@ -10,8 +10,6 @@ public class ShotManager : MonoBehaviour {
 	public GameObject missedShotParticle;
 
 	private AudioSource m_audio;
-	public GameObject mainCamForOSC;
-    public GameObject gunFeedback;
 	public bool INVERT_X = false;
 	public bool INVERT_Y = false;
 	
@@ -39,7 +37,6 @@ public class ShotManager : MonoBehaviour {
 
 	void Start () {
 		m_audio = CameraManager.instance.GetComponent<AudioSource>();
-		mainCamForOSC = GameObject.Find("0");
 	}
 	
 	void Update () {
@@ -111,12 +108,20 @@ public class ShotManager : MonoBehaviour {
             //Network.Instantiate(gunFeedback, hit.point, Quaternion.LookRotation(hit.normal), 0);
 
 			if(hit.transform.tag == "Outside" || hit.transform.tag == "Middle" || hit.transform.tag == "Center") {
-				if( enemyHitParticle != null )
-					GetHitParticle( hit.point, hit.normal, enemyHitParticle );
+				if( enemyHitParticle != null ) {
+					//GetHitParticle( hit.point, hit.normal, enemyHitParticle );
+					GetEnemyParticle( hit.point, hit.normal);
+					if( Network.isServer )
+						networkView.RPC( "GetEnemyParticle", RPCMode.Others, hit.point, hit.normal );
+				}
 				m_audio.Play();
 				hit.transform.SendMessageUpwards("Hit");				
 			} else {
-				//GetHitParticle( hit.point, hit.normal, missedShotParticle );
+				if( missedShotParticle != null ) {
+					GetMissedShotParticle( hit.point, hit.normal );
+					if( Network.isServer )
+						networkView.RPC( "GetMissedShotParticle", RPCMode.Others, hit.point, hit.normal );
+				}
 			}
 		}
 	}
@@ -136,8 +141,42 @@ public class ShotManager : MonoBehaviour {
 			// Play the particle
 			ParticleSystem pSystem = particle.GetComponentInChildren<ParticleSystem>();
 			pSystem.Play();
-			networkView.RPC( "NetworkPlayParticle", RPCMode.Others, particle.networkView.viewID );
-			StartCoroutine( "ResetParticle", particle );
+			//networkView.RPC( "NetworkPlayParticle", RPCMode.Others, particle.networkView.viewID );
+			StartCoroutine( ResetParticle( particle ) );
+		} else {
+			Debug.LogWarning( gameObject.name + "'s missing a prefab for it's public particle variable." );
+		}
+	}
+
+	[RPC]
+	private void GetEnemyParticle( Vector3 newPos, Vector3 newRotation ) {
+		if( enemyHitParticle != null ) {
+			// Get paricle and set position/rotation
+			GameObject particle = StaticPool.GetObj( enemyHitParticle );
+			particle.transform.position = newPos;
+			particle.transform.rotation = Quaternion.LookRotation( newRotation );
+			
+			// Play the particle
+			ParticleSystem pSystem = particle.GetComponentInChildren<ParticleSystem>();
+			pSystem.Play();
+			StartCoroutine( ResetParticle( particle ) );
+		} else {
+			Debug.LogWarning( gameObject.name + "'s missing a prefab for it's public particle variable." );
+		}
+	}
+
+	[RPC]
+	private void GetMissedShotParticle( Vector3 newPos, Vector3 newRotation ) {
+		if( missedShotParticle != null ) {
+			// Get paricle and set position/rotation
+			GameObject particle = StaticPool.GetObj( missedShotParticle );
+			particle.transform.position = newPos;
+			particle.transform.rotation = Quaternion.LookRotation( newRotation );
+			
+			// Play the particle
+			ParticleSystem pSystem = particle.GetComponentInChildren<ParticleSystem>();
+			pSystem.Play();
+			StartCoroutine( ResetParticle( particle ) );
 		} else {
 			Debug.LogWarning( gameObject.name + "'s missing a prefab for it's public particle variable." );
 		}

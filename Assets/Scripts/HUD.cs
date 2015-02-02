@@ -52,45 +52,21 @@ public class HUD : MonoBehaviour {
 	/// Activates the splat on the given Camera
 	/// </summary>
 	/// <param name="cameraIndex">Camera to activate splat on.</param> 
-	[RPC]
-	public void ActivateSplat( int cameraIndex ) {
-		switch( cameraIndex )
-		{
-		case 0:
-			canvas0Splat.Play();
-			break;
-		case 1:
-			canvas1Splat.Play();
-			break;
-		case 3:
-			canvas3Splat.Play();
-			break;
-		}
-	}
-		
-	[RPC]
-	public void ActivateFendOffTheHordeGUI() {
-		if( Network.isServer ) {
-			networkView.RPC( "ActivateFendOffTheHordeGUI", RPCMode.Others );
-			GameManager.instance.PlaySound( GameManager.instance.m_SfxAudioSource, GameManager.instance.m_fendOffTheHordeSound );
-		}
-
-		StartCoroutine( "PulseGUI", fendOffTheHordeImage0 );
-		StartCoroutine( "PulseGUI", fendOffTheHordeImage1 );
-		StartCoroutine( "PulseGUI", fendOffTheHordeImage3 );
-	}
-
-	[RPC]
-	public void ActivateSaveTheVillagerGUI() {
-		if( Network.isServer ) {
-			networkView.RPC( "ActivateSaveTheVillagerGUI", RPCMode.Others );
-			GameManager.instance.PlaySound( GameManager.instance.m_SfxAudioSource, GameManager.instance.m_saveTheVillagersSound );
-		}
-
-		StartCoroutine( "PulseGUI", saveTheVillagersImage0 );
-		StartCoroutine( "PulseGUI", saveTheVillagersImage1 );
-		StartCoroutine( "PulseGUI", saveTheVillagersImage3 );
-	}
+//	[RPC]
+//	public void ActivateSplat( int cameraIndex ) {
+//		switch( cameraIndex )
+//		{
+//		case 0:
+//			canvas0Splat.Play();
+//			break;
+//		case 1:
+//			canvas1Splat.Play();
+//			break;
+//		case 3:
+//			canvas3Splat.Play();
+//			break;
+//		}
+//	}
 
 	IEnumerator PulseGUI( Image img ) {
 		img.enabled = true;

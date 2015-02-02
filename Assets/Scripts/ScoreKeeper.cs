@@ -14,10 +14,10 @@ public class ScoreKeeper : MonoBehaviour {
 
     void OnGUI()
     {
-        // top left of screen
-        GUILayout.BeginArea(new Rect(32, 32, 200, 200));
-        GUILayout.Label("Score: " + score, scoreGUIStyle);
-		GUILayout.EndArea();
+//        // top left of screen
+//        GUILayout.BeginArea(new Rect(32, 32, 200, 200));
+//        GUILayout.Label("Score: " + score, scoreGUIStyle);
+//		GUILayout.EndArea();
     }
 
     public void AddGameStats(int s)

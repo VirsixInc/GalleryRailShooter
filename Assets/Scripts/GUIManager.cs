@@ -8,14 +8,16 @@ public class GUIManager : MonoBehaviour {
 
 	private static GUIManager _instance;
 
+	public Text m_titleText;
+	public Text m_shootToStartText;
     public Image[] m_startScreens;    
     public Image[] m_endScreens;
-    public GameObject dialogue;
+	public Image[] m_transitionImages;
 
 	// Fading of GUI elements
-	public float m_minAlpha = 0f;
-	public float m_maxAlpha = 1f;
-	public float m_fadeTime = 1f;
+	private float m_minAlpha = 0f;
+	private float m_maxAlpha = 1f;
+	private float m_fadeTime = 1f;
 
 	private HUD hud;
     private GUIManagerState currGUIState;
@@ -123,26 +125,39 @@ public class GUIManager : MonoBehaviour {
 
 	[RPC]
 	void RestartStartScreen() {
-		foreach( Image img in m_startScreens ) {
-			if( img != null ) {
-				img.enabled = true;
-				Color color = img.color;
-				color.a = 1f;
-				img.color = color;
-			}
+		if( m_titleText != null ) {
+			m_titleText.enabled = true;
+			m_titleText.color = new Color( m_titleText.color.r, m_titleText.color.g, m_titleText.color.b, 1f );
+		} else {
+			Debug.LogWarning( "Title GUI text is missing!" );
+		}
+
+		if( m_shootToStartText != null ) {
+			m_shootToStartText.enabled = true;
+			m_shootToStartText.color = new Color( m_shootToStartText.color.r, m_shootToStartText.color.g, m_shootToStartText.color.b, 1f );
+		} else {
+			Debug.Log( "Shoot to Start GUI text is missing!" );
 		}
 	}
 
 	[RPC]
 	public void FadeStartScreen( bool fadeOut ) {
-		foreach( Image startScreenImage in m_startScreens ) {
-			if( startScreenImage != null ) {
-				if( fadeOut ) {
-					StartCoroutine( "FadeOut", startScreenImage );
-				} else {
-					StartCoroutine( "FadeIn", startScreenImage );
-				}
-			}
+		if( m_titleText != null ) {
+			if( fadeOut )
+				StartCoroutine( FadeOut( m_titleText ) );
+			else
+				StartCoroutine( FadeIn( m_titleText ) );
+		} else {
+			Debug.LogWarning( "Title GUI text is missing!" );
+		}
+
+		if( m_shootToStartText != null ) {
+			if( fadeOut )
+				StartCoroutine( FadeOut( m_shootToStartText ) );
+			else
+				StartCoroutine( FadeIn( m_shootToStartText ) );
+		} else {
+			Debug.Log( "Shoot to Start GUI text is missing!" );
 		}
 	}
 
@@ -151,9 +166,21 @@ public class GUIManager : MonoBehaviour {
 		foreach( Image endScreenImage in m_endScreens ) {
 			if( endScreenImage != null ) {
 				if( fadeOut )
-					StartCoroutine( "FadeOut", endScreenImage );
+					StartCoroutine( FadeOut( endScreenImage ) );
 				else
-					StartCoroutine( "FadeIn", endScreenImage );
+					StartCoroutine( FadeIn( endScreenImage ) );
+			}
+		}
+	}
+
+	[RPC]
+	public void FadeTransitionScreen( bool fadeOut ) {
+		foreach( Image transitionImage in m_transitionImages ) {
+			if( transitionImage != null ) {
+				if( fadeOut )
+					StartCoroutine( FadeOut( transitionImage ) );
+				else 
+					StartCoroutine( FadeIn( transitionImage ) );
 			}
 		}
 	}
@@ -191,6 +218,40 @@ public class GUIManager : MonoBehaviour {
 			GameManager.instance.TransitionToLevel( 1 );
 		}
 	}
+
+	IEnumerator FadeIn( Text text ) {
+		if( text == null ) {
+			Debug.Log( gameObject.name + "'s GuiManager is missing an text for fading." );
+			yield return null;
+		}
+		
+		text.enabled = true;
+		
+		float timer = 0f;
+		Color t_textureColor = text.color;
+		float t_startAlpha = text.color.a;
+		
+		while( timer <= 1f ) {
+			t_textureColor = text.color;
+			t_textureColor.a = Mathf.Lerp( t_startAlpha, m_maxAlpha, timer);
+			text.color = t_textureColor;
+			
+			timer += Time.deltaTime / m_fadeTime;
+			yield return null;
+		}
+		
+		t_textureColor.a = 1f;
+		text.color = t_textureColor;
+		
+		if( GameManager.instance.CurrentMode == (int)GameManager.GameMode.GameOver && !GameManager.instance.m_gameIsRestarting && Network.isServer ) {
+			GameManager.instance.m_gameIsRestarting = true;
+			FadeStartScreen( false );
+			networkView.RPC( "FadeStartScreen", RPCMode.Others, false );
+			
+			yield return new WaitForSeconds( 8f );
+			GameManager.instance.TransitionToLevel( 1 );
+		}
+	}
 	
 	IEnumerator FadeOut( Image image ) {
 		if( image == null ) {
@@ -214,10 +275,36 @@ public class GUIManager : MonoBehaviour {
 		}
 
 		image.enabled = false;
-		if( image == m_startScreens[0] && Network.isServer ) {
+//		if( image == m_startScreens[0] && Network.isServer ) {
+//			yield return new WaitForSeconds( 2f );
+//			CameraMove.instance.MoveCamAlongSpline();
+//		}
+	}
+	IEnumerator FadeOut( Text text ) {
+		if( text == null ) {
+			Debug.Log( gameObject.name + "'s GuiManager is missing an image for fading." );
+			yield return null;
+		}
+		
+		text.enabled = true;
+		
+		float timer = 0f;
+		Color t_textureColor;
+		float t_startAlpha = text.color.a;
+		
+		while( timer <= 1f ) {
+			t_textureColor = text.color;
+			t_textureColor.a = Mathf.Lerp( t_startAlpha, m_minAlpha, timer);
+			text.color = t_textureColor;
+			
+			timer += Time.deltaTime / m_fadeTime;
+			yield return null;
+		}
+		
+		text.enabled = false;
+		if( text == m_titleText && Network.isServer ) {
 			yield return new WaitForSeconds( 2f );
 			CameraMove.instance.MoveCamAlongSpline();
 		}
 	}
-
 }

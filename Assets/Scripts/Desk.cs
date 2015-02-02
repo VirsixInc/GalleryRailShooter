@@ -5,13 +5,11 @@ public class Desk : MonoBehaviour {
 
 	public Target[] m_targets;
 	private bool m_allTargetsHit;
-	private Room m_room;
 	private bool m_active;
 
 	// Use this for initialization
 	void Start () {
-		m_targets = GetComponentsInChildren<Target>();	
-		m_room = transform.parent.GetComponent<Room>();
+		m_targets = GetComponentsInChildren<Target>();
 		m_allTargetsHit = false;
 	}
 	

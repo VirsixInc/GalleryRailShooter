@@ -22,25 +22,6 @@ public class GameManager : MonoBehaviour {
 	private GUIManager m_guiManager;
 	private NetworkLevelLoader m_networkLevelLoader;
 
-	// Music
-	private bool m_playingGameMusic = false;
-	private float m_startMusicVolume;
-	public float m_musicFadeTime = 3f;
-	private int m_currentSong = 0;
-	public AudioSource m_gameMusicAudioSource;
-	public AudioClip m_menuSong;
-	public AudioClip m_songSongForLimeric;
-	public AudioClip[] m_gameSongs;
-	// Voice Over
-	public AudioSource m_voiceOverAudioSource;
-	public AudioClip m_startLimeric;
-	public AudioClip m_saveTheVillagersSound;
-	public AudioClip m_fendOffTheHordeSound;
-	// SFX
-	public AudioSource m_SfxAudioSource;
-	public AudioClip m_thunderSound;
-	public AudioClip m_laughSound;
-
 	// Debug
 	public bool GOD_MODE = false;
 
@@ -74,7 +55,6 @@ public class GameManager : MonoBehaviour {
 		m_cameraMove = CameraMove.instance;
 		m_guiManager = GUIManager.instance;
 		m_networkLevelLoader = GetComponent<NetworkLevelLoader>();
-		m_startMusicVolume = m_gameMusicAudioSource.volume;
 	}
 	
 	// Update is called once per frame
@@ -88,17 +68,6 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	void OnLevelWasLoaded( int level ) {
-		if( Network.isServer ) {
-			switch( m_currMode ) {
-			case GameMode.Title:
-				m_gameMusicAudioSource.clip = m_menuSong;
-				m_gameMusicAudioSource.Play();
-				break;
-			}
-		}
-	}
-
 	[RPC]
 	public void ChangeMode(int newMode) {
 		if(Network.isServer ) {
@@ -109,10 +78,6 @@ public class GameManager : MonoBehaviour {
 			{
 			case (int)GameMode.Title:
 				m_gameIsRestarting = false;
-				//m_SfxAudioSource.clip = m_thunderSound;
-
-				if( !m_gameMusicAudioSource.isPlaying )
-					m_gameMusicAudioSource.Play();
 				break;
 
 			case (int)GameMode.Play:
@@ -137,90 +102,6 @@ public class GameManager : MonoBehaviour {
 		m_guiManager.ChangeModeGUI();
 	}
 
-	IEnumerator TransitionToNextSong() {
-		float timer = 0f;
-
-		// Fade out first clip
-		while( timer <= 1f ) {
-			m_gameMusicAudioSource.volume = Mathf.Lerp( m_startMusicVolume, 0f, timer );
-			
-			timer += Time.deltaTime / m_musicFadeTime;
-			yield return null;
-		}
-
-		yield return new WaitForSeconds( 0.5f );
-		timer = 0f;
-
-		// Fade in second clip
-		m_currentSong++;
-		if( m_currentSong >= m_gameSongs.Length )
-			m_currentSong = 0;
-
-		m_gameMusicAudioSource.clip = m_gameSongs[m_currentSong];
-		m_gameMusicAudioSource.Play();
-
-		while( timer <= 1f ) {
-			m_gameMusicAudioSource.volume = Mathf.Lerp( 0f, m_startMusicVolume, timer );
-			
-			timer += Time.deltaTime / m_musicFadeTime;
-			yield return null;
-		}
-	}
-
-	IEnumerator TransitionTitleSongToLimericSong() {
-		float timer = 0f;
-
-		m_gameMusicAudioSource.Stop();
-		//m_SfxAudioSource.Play();
-
-		// Fade in second clip
-		m_gameMusicAudioSource.clip = m_songSongForLimeric;
-		m_gameMusicAudioSource.Play();
-
-		while( timer <= 1f ) {
-			m_gameMusicAudioSource.volume = Mathf.Lerp( 0f, m_startMusicVolume, timer );			
-			timer += Time.deltaTime / m_musicFadeTime;
-			yield return null;
-		}
-
-		// Start Limeric
-		yield return new WaitForSeconds( 6.3f - m_musicFadeTime );
-		m_voiceOverAudioSource.Play();
-
-		yield return new WaitForSeconds( m_voiceOverAudioSource.clip.length + 1f );
-
-		yield return StartCoroutine( "TransitionToGameMusic" );
-	}
-
-	IEnumerator TransitionToGameMusic() {
-		float timer = 0f;
-		
-		// Fade out first clip
-		while( timer <= 1f ) {
-			m_gameMusicAudioSource.volume = Mathf.Lerp( m_startMusicVolume, 0f, timer );
-			
-			timer += Time.deltaTime / m_musicFadeTime;
-			yield return null;
-		}
-
-		timer = 0f;
-
-		// Fade in second clip
-		m_gameMusicAudioSource.clip = m_gameSongs[0];
-		m_gameMusicAudioSource.volume = 1f;
-		m_gameMusicAudioSource.Play();
-		
-//		while( timer <= 1f ) {
-//			m_gameMusicAudioSource.volume = Mathf.Lerp( 0f, m_startMusicVolume, timer );
-//			
-//			timer += Time.deltaTime / m_musicFadeTime;
-//			yield return null;
-//		}
-
-		m_playingGameMusic = true;
-		m_currentSong++;
-	}
-
 	/// <summary>
 	/// Plaies the sound.
 	/// </summary>
@@ -240,24 +121,7 @@ public class GameManager : MonoBehaviour {
 		StaticPool.s_instance.networkView.RPC( "Reset", RPCMode.OthersBuffered );
 	}
 
-	void Reset() {
-		if( Network.isServer ) {
-			StopCoroutine("TransitionToGameMusic");
-			StopCoroutine("TransitionTitleSongToLimericSong");
-			StopCoroutine("TransitionToNextSong");
-
-			AudioSource[] audios = FindObjectsOfType<AudioSource>();
-			foreach( AudioSource aS in audios )
-				aS.Stop();
-
-			m_gameMusicAudioSource.clip = m_menuSong;
-			m_playingGameMusic = false;
-			m_currentSong = 0;
-		}
-	}
-
 	public void TransitionToLevel( int level ) {
-		Reset();
 		StaticPool.s_instance.Reset();
 		m_cameraMove.Reset();
 		m_networkLevelLoader.TransitionToLevel( level );

@@ -40,10 +40,10 @@ public class StaticPool : MonoBehaviour {
 	public static void InitObj(GameObject prefab) {
 		if(s_instance.objLists.ContainsKey(prefab) == false) {
 			GameObject holder = new GameObject(prefab.name);
-			holder.AddComponent<NetworkView>();
-			holder.networkView.viewID = Network.AllocateViewID();
+			//holder.AddComponent<NetworkView>();
+			//holder.networkView.viewID = Network.AllocateViewID();
 			holder.transform.parent = s_instance.transform;
-			s_instance.networkView.RPC( "NetworkInitObj", RPCMode.OthersBuffered, holder.name, holder.networkView.viewID );
+			//s_instance.networkView.RPC( "NetworkInitObj", RPCMode.OthersBuffered, holder.name, holder.networkView.viewID );
 
 			s_instance.objLists.Add (prefab, new List<GameObject>());
 			AddToList(prefab, DEFAULT_SIZE, holder.transform);
@@ -82,7 +82,7 @@ public class StaticPool : MonoBehaviour {
 			s_instance.objLists[prefab].Add(obj);
 			obj.transform.parent = holder;
 
-			s_instance.networkView.RPC( "NetworkAddToList", RPCMode.OthersBuffered, holder.networkView.viewID, obj.networkView.viewID );
+			//s_instance.networkView.RPC( "NetworkAddToList", RPCMode.OthersBuffered, holder.networkView.viewID, obj.networkView.viewID );
 		}
 	}
 
